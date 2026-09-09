@@ -18,6 +18,7 @@
   "homepage": "https://github.com/sanzc3-source/playwright-mcp-e2e#readme",
   "devDependencies": {
     "@playwright/test": "^1.63.0",
-    "@types/node": "^26.5.0"
+    "@types/node": "^22.20.1",
+    "typescript": "^7.0.2"
   }
 }

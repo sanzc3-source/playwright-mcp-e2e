@@ -1,0 +1,23 @@
+services:
+  sut:
+    build:
+      context: ../cypress-realworld-app
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    networks:
+      - test-net
+
+  playwright:
+    build:
+      context: .
+    depends_on:
+      - sut
+    environment:
+      - BASE_URL=http://sut:3000
+    networks:
+      - test-net
+
+networks:
+  test-net:
+    driver: bridge

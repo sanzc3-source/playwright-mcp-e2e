@@ -21,15 +21,25 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  /* Reporter to use. See https://playwright.dev/docs/test-reporters. HTML for local viewing, JUnit XML for Jenkins to parse test trends, list for live terminal output. */
+  reporter: [
+  ['html', { open: 'never' }],
+  ['junit', { outputFile: 'test-results/junit.xml' }],
+  ['list'],
+],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    /*Records every test, but deletes the video automatically if the test passes. Keeps disk usage sane in CI while still catching failures on video. */
+    video: 'retain-on-failure',
+
+    /* Captures a screenshot only when a test fails, not on every pass.*/
+    screenshot: 'only-on-failure',
   },
 
   /* Configure projects for major browsers */
