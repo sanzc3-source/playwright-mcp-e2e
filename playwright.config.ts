@@ -39,7 +39,7 @@ export default defineConfig({
     video: 'retain-on-failure',
 
     /* RWA uses "data-test" attributes (not the Playwright default "data-testid"), so this tells getByTestId() to look for the right one everywhere in the suite. */
-    testIdAttribute: 'data-test',	
+    testIdAttribute: 'data-test',
 
     /* Captures a screenshot only when a test fails, not on every pass.*/
     screenshot: 'only-on-failure',
@@ -52,9 +52,9 @@ export default defineConfig({
       testMatch: /.*\.setup\.ts/,
     },
 
-        {
+    {
       name: 'api',
-      testMatch: /api-check\.spec\.ts/,
+      testMatch: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
       dependencies: ['setup'],
     },
 
@@ -62,21 +62,21 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
-      testIgnore: /api-check\.spec\.ts/,
+      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
-      testIgnore: /api-check\.spec\.ts/,
+      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
-      testIgnore: /api-check\.spec\.ts/,
+      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
     },
   ],
 

@@ -1,4 +1,4 @@
-import { test, expect } from '../src/fixtures/api.fixture.js';
+import { test, expect } from '../../src/fixtures/api.fixture.js';
 
 // Proves apiClient carries a valid authenticated session — no browser involved at all
 test('API request context is authenticated', async ({ apiClient }) => {
