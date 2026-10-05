@@ -52,22 +52,31 @@ export default defineConfig({
       testMatch: /.*\.setup\.ts/,
     },
 
+        {
+      name: 'api',
+      testMatch: /api-check\.spec\.ts/,
+      dependencies: ['setup'],
+    },
+
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
+      testIgnore: /api-check\.spec\.ts/,
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
+      testIgnore: /api-check\.spec\.ts/,
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
+      testIgnore: /api-check\.spec\.ts/,
     },
   ],
 
