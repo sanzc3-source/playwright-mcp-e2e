@@ -20,8 +20,13 @@ export class ApiClient {
     return this.context.post(path, { data });
   }
 
-   // Thin wrapper around DELETE
+      // Thin wrapper around DELETE
   async delete(path: string) {
     return this.context.delete(path);
+  }
+
+  // Thin wrapper around PATCH — takes an optional JSON body
+  async patch(path: string, data?: object) {
+    return this.context.patch(path, { data });
   }
 }

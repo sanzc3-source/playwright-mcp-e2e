@@ -54,7 +54,7 @@ export default defineConfig({
 
     {
       name: 'api',
-      testMatch: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
+      testMatch: /api-check\.spec\.ts|bankAccounts\.spec\.ts|transactions\.spec\.ts|users\.spec\.ts|notifications\.spec\.ts/,
       dependencies: ['setup'],
     },
 
@@ -62,21 +62,21 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
-      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
+      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts|transactions\.spec\.ts|users\.spec\.ts|notifications\.spec\.ts/,
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
-      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
+      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts|transactions\.spec\.ts|users\.spec\.ts|notifications\.spec\.ts/,
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'], storageState: 'playwright/.auth/user.json' },
       dependencies: ['setup'],
-      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts/,
+      testIgnore: /api-check\.spec\.ts|bankAccounts\.spec\.ts|transactions\.spec\.ts|users\.spec\.ts|notifications\.spec\.ts/,
     },
   ],
 
