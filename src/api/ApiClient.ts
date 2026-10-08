@@ -19,4 +19,9 @@ export class ApiClient {
   async post(path: string, data?: object) {
     return this.context.post(path, { data });
   }
+
+   // Thin wrapper around DELETE
+  async delete(path: string) {
+    return this.context.delete(path);
+  }
 }
