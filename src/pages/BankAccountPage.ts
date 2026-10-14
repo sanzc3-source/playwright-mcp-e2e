@@ -1,0 +1,26 @@
+import type { Page } from '@playwright/test';
+import { BasePage } from './BasePage.js';
+
+// Page Object for the Create Bank Account dialog
+export class BankAccountPage extends BasePage {
+  constructor(page: Page) {
+    super(page);
+  }
+
+  // Opens the Create Bank Account dialog from the Bank Accounts page
+  async clickCreateNew() {
+    await this.page.getByTestId('bankaccount-new').click();
+  }
+
+  // Fills out and submits the form.
+  // data-test sits on the wrapper div for these three fields, not the input itself -
+  // confirmed via DevTools - so each needs .locator('input') to reach the actual field.
+  async createAccount(bankName: string, routingNumber: string, accountNumber: string) {
+    await this.page.getByTestId('bankaccount-bankName-input').locator('input').fill(bankName);
+    await this.page.getByTestId('bankaccount-routingNumber-input').locator('input').fill(routingNumber);
+    await this.page.getByTestId('bankaccount-accountNumber-input').locator('input').fill(accountNumber);
+
+    // Confirmed via DevTools - data-test sits directly on the <button> here, no wrapper
+    await this.page.getByTestId('bankaccount-submit').click();
+  }
+}
