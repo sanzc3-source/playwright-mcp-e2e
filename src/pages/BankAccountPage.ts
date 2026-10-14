@@ -23,4 +23,15 @@ export class BankAccountPage extends BasePage {
     // Confirmed via DevTools - data-test sits directly on the <button> here, no wrapper
     await this.page.getByTestId('bankaccount-submit').click();
   }
+
+    // Scopes to the specific account row by its bank name, since the Delete button's
+  // data-test value is identical across every row - clicking it unscoped would hit
+  // whichever account Playwright finds first, not necessarily the one we mean
+  getAccountRow(bankName: string) {
+    return this.page.locator('[data-test^="bankaccount-list-item-"]').filter({ hasText: bankName });
+  }
+
+  async deleteAccount(bankName: string) {
+    await this.getAccountRow(bankName).getByTestId('bankaccount-delete').click();
+  }
 }
