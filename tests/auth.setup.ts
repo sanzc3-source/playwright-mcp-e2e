@@ -6,6 +6,10 @@ import { SignInPage } from '../src/pages/SignInPage.js';
 const authFile = 'playwright/.auth/user.json';
 
 setup('authenticate', async ({ page }) => {
+  // A fresh backend starts with an empty database - this endpoint is the only
+  // thing that loads the test user data, and nothing else in the suite calls it
+  await fetch('http://localhost:3001/testData/seed', { method: 'POST' });
+
   // One real UI login — this is the only place in the whole suite that touches the sign-in form.
   const signInPage = new SignInPage(page);
   await signInPage.goToSignIn();

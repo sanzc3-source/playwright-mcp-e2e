@@ -81,10 +81,12 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  /* Starts the Real World App (frontend + backend) via Docker before tests run,
+     and tears it down after - no manual startup step needed locally or in CI. */
+  webServer: {
+    command: 'docker compose -f ../cypress-realworld-app/docker-compose.yml up --build',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 180 * 1000,
+  },
 });
