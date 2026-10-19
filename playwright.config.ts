@@ -29,8 +29,10 @@ export default defineConfig({
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'http://localhost:3000',
+    /* Base URL to use in actions like `await page.goto('')`. Set by the Docker Compose
+       setup (BASE_URL=http://sut:3000) when tests run fully containerized; falls back
+       to localhost for local runs against the Docker-started app. */
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -81,12 +83,15 @@ export default defineConfig({
     },
   ],
 
-  /* Starts the Real World App (frontend + backend) via Docker before tests run,
-     and tears it down after - no manual startup step needed locally or in CI. */
-  webServer: {
-    command: 'docker compose -f ../cypress-realworld-app/docker-compose.yml up --build',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 180 * 1000,
-  },
+  /* Starts the Real World App via Docker before tests run, for local runs only.
+     Skipped when BASE_URL is already set, since that means the app is being started
+     separately by the containerized Docker Compose setup instead. */
+  webServer: process.env.BASE_URL
+    ? undefined
+    : {
+        command: 'docker compose -f ../cypress-realworld-app/docker-compose.yml up --build',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 180 * 1000,
+      },
 });

@@ -15,6 +15,9 @@ services:
       - sut
     environment:
       - BASE_URL=http://sut:3000
+    volumes:
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
     networks:
       - test-net
 

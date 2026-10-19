@@ -10,18 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Clone Real World App next to this repo
+      run: git clone --depth 1 --branch develop https://github.com/sanzc3-source/cypress-realworld-app.git ../cypress-realworld-app
+    - name: Run tests in Docker Compose
+      run: docker compose up --build --abort-on-container-exit --exit-code-from playwright
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
-        path: playwright-report/
+        path: |
+          playwright-report/
+          test-results/
         retention-days: 30

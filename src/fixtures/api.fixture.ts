@@ -7,6 +7,10 @@ type ApiFixtures = {
   apiClient: ApiClient;
 };
 
+// The backend shares the frontend's host, just on a different port. Locally that's
+// "localhost"; inside the Docker Compose network it's the "sut" service name from BASE_URL.
+const apiHost = process.env.BASE_URL ? new URL(process.env.BASE_URL).hostname : 'localhost';
+
 // Extends Playwright's base test with an authenticated API request context and client
 export const test = base.extend<ApiFixtures>({
   // apiContext: hands tests a request context that's already authenticated,
@@ -15,7 +19,7 @@ export const test = base.extend<ApiFixtures>({
     // newContext() builds a fresh API client, loading the same storageState
     // file our browser fixture uses, so the backend recognizes this as a logged-in user
     const context = await playwright.request.newContext({
-      baseURL: 'http://localhost:3001',
+      baseURL: `http://${apiHost}:3001`,
       storageState: 'playwright/.auth/user.json',
     });
 
