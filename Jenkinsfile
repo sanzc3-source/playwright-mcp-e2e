@@ -31,6 +31,7 @@ pipeline {
     post {
         always {
             sh '''
+                rm -rf test-results playwright-report
                 mkdir -p test-results playwright-report
                 docker cp $($COMPOSE ps -a -q playwright):/app/test-results/. test-results/ || true
                 docker cp $($COMPOSE ps -a -q playwright):/app/playwright-report/. playwright-report/ || true
