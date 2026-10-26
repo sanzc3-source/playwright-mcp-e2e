@@ -12,7 +12,7 @@ const appHost = process.env.BASE_URL ? new URL(process.env.BASE_URL).hostname : 
 // Retries the seed request until the backend is actually ready to accept it -
 // the container starting doesn't mean the app inside it has finished booting yet
 async function seedDatabase() {
-  const maxAttempts = 15;
+  const maxAttempts = 45;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -28,6 +28,8 @@ async function seedDatabase() {
 }
 
 setup('authenticate', async ({ page }) => {
+  setup.setTimeout(120 * 1000);
+
   // A fresh backend starts with an empty database - this endpoint is the only
   // thing that loads the test user data, and nothing else in the suite calls it
   await seedDatabase();
