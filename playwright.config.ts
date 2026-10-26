@@ -19,8 +19,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  // Containerized runs share one machine with the app, so cap parallelism
+  workers: process.env.CI ? 1 : process.env.BASE_URL ? 2 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters. HTML for local viewing, JUnit XML for Jenkins to parse test trends, list for live terminal output. */
   reporter: [
     ['html', { open: 'never' }],
