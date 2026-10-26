@@ -1,3 +1,8 @@
 services:
+  sut:
+    ports: !reset []
   playwright:
     volumes: !reset []
+    environment:
+      - PW_ARGS=${PW_ARGS:-}
+    command: sh -c 'npx playwright test $$PW_ARGS'
