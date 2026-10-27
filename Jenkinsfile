@@ -2,12 +2,11 @@ pipeline {
     agent any
 
     options {
-        timeout(time: 30, unit: 'MINUTES')
+        timeout(time: 45, unit: 'MINUTES')
         timestamps()
     }
 
     environment {
-        COMPOSE_PROJECT_NAME = "pw-${env.BUILD_NUMBER}"
         COMPOSE = 'docker compose -f docker-compose.yml -f docker-compose.jenkins.yml'
     }
 
@@ -17,28 +16,43 @@ pipeline {
                 sh '''
                     rm -rf ../cypress-realworld-app
                     git clone --depth 1 --branch develop https://github.com/sanzc3-source/cypress-realworld-app.git ../cypress-realworld-app
+                    rm -rf shard-* test-results playwright-report
                 '''
             }
         }
 
-        stage('Run tests in Docker Compose') {
+        stage('Run shards in parallel') {
             steps {
-                sh '$COMPOSE up --build --abort-on-container-exit --exit-code-from playwright'
+                script {
+                    def total = 3
+                    def shards = [:]
+                    for (int i = 1; i <= total; i++) {
+                        def n = i
+                        shards['Shard ' + n] = {
+                            withEnv(["SHARD_N=${n}", "COMPOSE_PROJECT_NAME=pw-${env.BUILD_NUMBER}-s${n}", "PW_ARGS=--shard=${n}/${total} --workers=1"]) {
+                                try {
+                                    sh '$COMPOSE up --build --abort-on-container-exit --exit-code-from playwright'
+                                } finally {
+                                    sh '''
+                                        mkdir -p shard-$SHARD_N/test-results shard-$SHARD_N/playwright-report
+                                        docker cp $($COMPOSE ps -a -q playwright):/app/test-results/. shard-$SHARD_N/test-results/ || true
+                                        docker cp $($COMPOSE ps -a -q playwright):/app/playwright-report/. shard-$SHARD_N/playwright-report/ || true
+                                        $COMPOSE down -v --rmi local || true
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                    parallel shards
+                }
             }
         }
     }
 
     post {
         always {
-            sh '''
-                rm -rf test-results playwright-report
-                mkdir -p test-results playwright-report
-                docker cp $($COMPOSE ps -a -q playwright):/app/test-results/. test-results/ || true
-                docker cp $($COMPOSE ps -a -q playwright):/app/playwright-report/. playwright-report/ || true
-            '''
-            junit allowEmptyResults: true, testResults: 'test-results/junit.xml'
-            archiveArtifacts artifacts: 'playwright-report/**, test-results/**', allowEmptyArchive: true
-            sh '$COMPOSE down -v --rmi local || true'
+            junit allowEmptyResults: true, testResults: 'shard-*/test-results/junit.xml'
+            archiveArtifacts artifacts: 'shard-*/**', allowEmptyArchive: true
         }
     }
 }
