@@ -29,7 +29,9 @@ pipeline {
                     for (int i = 1; i <= total; i++) {
                         def n = i
                         shards['Shard ' + n] = {
-                            withEnv(["SHARD_N=${n}", "COMPOSE_PROJECT_NAME=pw-${env.BUILD_NUMBER}-s${n}", "PW_ARGS=--shard=${n}/${total} --workers=1"]) {
+                            withEnv(["SHARD_N=${n}", "COMPOSE_PROJECT_NAME=pw-${env.BUILD_NUMBER}-s${n}", "PW_ARGS=--shard=${n}/${total} --workers=1 --retries=2"]) {
+                                // Stagger starts so the app cold starts do not all compete at once
+                                sleep time: (total - n) * 45, unit: 'SECONDS'
                                 try {
                                     sh '$COMPOSE up --build --abort-on-container-exit --exit-code-from playwright'
                                 } finally {
